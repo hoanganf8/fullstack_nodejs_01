@@ -43,3 +43,10 @@ h1.page-title.first#feature{
 h2.page-title#item.last{
     color: blue;
 }
+
+body{
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+    line-height: 1.2;
+    font-size: 1rem; 
+}
