@@ -47,3 +47,5 @@
 * Bị chặn bởi min-height và max-height nếu flex-direction = column
 
 - flex
+
+- align-self
