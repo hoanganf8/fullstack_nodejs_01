@@ -1,0 +1,47 @@
+.header {
+  padding: 20px 0;
+  box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.15);
+
+  .header-menu {
+    ul {
+      display: flex;
+      justify-content: flex-end;
+      li {
+        a {
+          font-weight: 600;
+          font-size: 2rem;
+          padding: 0 30px;
+          &.active {
+            color: $primaryColor;
+          }
+          &:hover {
+            @extend .active;
+          }
+        }
+      }
+    }
+  }
+
+  .header-icon {
+    display: flex;
+    justify-content: space-between;
+    .cart-icon {
+      position: relative;
+      span {
+        position: absolute;
+        right: -7px;
+        top: -7px;
+        background: $secondaryColor;
+        color: #fff;
+        padding: 0 4px;
+        border-radius: 50%;
+      }
+    }
+  }
+
+  .row {
+    > [class^="col-"] {
+      margin: 0;
+    }
+  }
+}

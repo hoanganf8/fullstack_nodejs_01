@@ -1,0 +1,75 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  outline: 0;
+  border: 0;
+}
+
+html {
+  font-size: 10px;
+}
+
+body {
+  font-size: 1.6rem;
+  color: #2c2c2c;
+  line-height: 1.2;
+  font-family: Inter, sans-serif;
+}
+
+a {
+  text-decoration: none;
+  color: #2c2c2c;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+.container {
+  --container-width: 1440px;
+}
+
+.header {
+  padding: 20px 0;
+  box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.15);
+}
+.header .header-menu ul {
+  display: flex;
+  justify-content: flex-end;
+}
+.header .header-menu ul li a {
+  font-weight: 600;
+  font-size: 2rem;
+  padding: 0 30px;
+}
+.header .header-menu ul li a.active, .header .header-menu ul li a:hover {
+  color: #46b20f;
+}
+.header .header-icon {
+  display: flex;
+  justify-content: space-between;
+}
+.header .header-icon .cart-icon {
+  position: relative;
+}
+.header .header-icon .cart-icon span {
+  position: absolute;
+  right: -7px;
+  top: -7px;
+  background: #e05000;
+  color: #fff;
+  padding: 0 4px;
+  border-radius: 50%;
+}
+.header .row > [class^=col-] {
+  margin: 0;
+}
+
+/*# sourceMappingURL=style.css.map */
