@@ -38,3 +38,63 @@ if (carouselItems.length) {
     }
   });
 }
+
+//Vuốt chuyển slider
+
+var isDrag = false;
+var initialOffsetX;
+var rate = (10 * itemWidth) / 100;
+var check = false;
+
+carouselInner.addEventListener("mousedown", function (e) {
+  isDrag = true;
+  initialOffsetX = e.offsetX;
+});
+
+carouselInner.addEventListener("mousemove", function (e) {
+  e.preventDefault();
+  if (isDrag) {
+    var currentOffsetX = e.offsetX;
+    var moveWidth = currentOffsetX - initialOffsetX;
+
+    if (moveWidth < 0) {
+      //Next slide
+      if (Math.abs(moveWidth) > rate) {
+        if (!check && Math.abs(position) < totalWidth - itemWidth) {
+          carouselInner.style.transition = null; //Khôi phục lại hiệu ứng
+          position -= itemWidth;
+          // console.log(position);
+          carouselInner.style.translate = `${position}px`;
+          check = true;
+        }
+      } else {
+        carouselInner.style.transition = "none"; //Loại bỏ hiệu ứng khi kéo
+        carouselInner.style.translate = `${position + moveWidth}px`;
+      }
+    } else {
+      //Prev Slide
+      if (Math.abs(moveWidth) > rate) {
+        if (!check && position < 0) {
+          carouselInner.style.transition = null; //Khôi phục lại hiệu ứng
+          position += itemWidth;
+          // console.log(position);
+          carouselInner.style.translate = `${position}px`;
+          check = true;
+        }
+      } else {
+        carouselInner.style.transition = "none"; //Loại bỏ hiệu ứng khi kéo
+        carouselInner.style.translate = `${position + moveWidth}px`;
+      }
+    }
+  }
+});
+
+carouselInner.addEventListener("mouseup", function () {
+  isDrag = false;
+  if (check) {
+    check = false;
+  } else {
+    carouselInner.style.transition = null; //Khôi phục lại hiệu ứng
+    carouselInner.style.translate = `${position}px`;
+  }
+});
