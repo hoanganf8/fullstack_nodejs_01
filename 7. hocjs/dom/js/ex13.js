@@ -2,7 +2,7 @@ var progressBar = document.querySelector(".progress-bar");
 
 var progress = progressBar.querySelector(".progress");
 
-var progressDot = document.querySelector("span");
+var progressDot = progress.querySelector("span");
 
 var progressBarWidth = progressBar.clientWidth;
 
@@ -11,9 +11,6 @@ var initialClientX = 0;
 var initalRate = 0;
 var rate = 0;
 
-var handleChange = function (value) {
-  console.log(value);
-};
 
 progressBar.addEventListener("mousedown", function (e) {
   //   console.log(e.offsetX, progressBarWidth);
@@ -47,16 +44,25 @@ document.addEventListener("mousemove", function (e) {
     var space = e.clientX - initialClientX;
     // console.log(space);
     rate = (space * 100) / progressBarWidth + initalRate;
-    if (rate >= 0 && rate <= 100) {
-      progress.style.width = `${rate}%`;
-      handleChange(rate);
+    if (rate < 0) {
+      rate = 0;
     }
+
+    if (rate > 100) {
+      rate = 100;
+    }
+    
+    progress.style.width = `${rate}%`;
+    handleChange(rate);
   }
 });
 
 document.addEventListener("mouseup", function () {
   isDrag = false;
   initalRate = rate;
+  
+  audio.currentTime = currentTime;
+
 });
 
 /*
@@ -101,11 +107,37 @@ playBtn.addEventListener("click", function () {
 
 audio.addEventListener("timeupdate", function () {
   //   console.log("đang chạy: ", this.currentTime);
-  currentTimeEl.innerText = getTime(this.currentTime);
+  if (!isDrag) {
+    currentTimeEl.innerText = getTime(this.currentTime);
 
-  //Tính tỷ lệ phần trăm
-  var rate = (this.currentTime / this.duration) * 100;
+    //Tính tỷ lệ phần trăm
+    rate = (this.currentTime / this.duration) * 100;
+  
+    //Update vào timer
+    progress.style.width = `${rate}%`;
 
-  //Update vào timer
-  progress.style.width = `${rate}%`;
+    currentTime = this.currentTime;
+  }
+
 });
+
+audio.addEventListener('ended', function() {
+  rate = 0;
+  currentTime = 0;
+  audio.currentTime = 0;
+  progress.style.width = 0;
+  playBtn.innerHTML = playIcon;
+})
+
+var currentTime = 0;
+var handleChange = function (value) {
+  currentTime = value / 100 * audio.duration;
+
+  currentTimeEl.innerText = getTime(currentTime)
+  
+  if (!isDrag) {
+   
+    audio.currentTime = currentTime;
+  }
+  
+};
