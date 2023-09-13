@@ -2399,16 +2399,16 @@ var songInfo = `
 
 karaokePlayBtn.addEventListener("click", function () {
   karaokeInner.classList.add("show");
-  karaokeContent.innerHTML = songInfo;
+  // karaokeContent.innerHTML = songInfo;
 });
 
 karaokeClose.addEventListener("click", function () {
   karaokeInner.classList.remove("show");
-  karaokeContent.innerHTML = "";
+  // karaokeContent.innerHTML = "";
 });
 
 var number = 2;
-
+var currentPage;
 var handleKaraoke = function (currentTime) {
   //Quy đổi currentTime ra mili giây
   currentTime *= 1000;
@@ -2423,7 +2423,6 @@ var handleKaraoke = function (currentTime) {
 
   if (index !== -1) {
     // var karaokeContent = karaokeInner.querySelector(".karaoke-content");
-    karaokeContent.innerText = "";
 
     /*
     Page = 1 -> index = 0 đến 1
@@ -2436,39 +2435,77 @@ var handleKaraoke = function (currentTime) {
 
     var page = Math.floor(index / number + 1);
 
-    var offset = (page - 1) * number;
+    handleColor(currentTime);
 
-    // console.log(`Màn hình thứ: ${page}`);
-    // console.log(`Index = ${index}`, `Offset = ${offset}`);
+    if (page !== currentPage) {
+      var offset = (page - 1) * number;
 
-    if (index >= offset && index < offset + number) {
-      var div = document.createElement("div");
+      // console.log(`Màn hình thứ: ${page}`);
+      // console.log(`Index = ${index}`, `Offset = ${offset}`);
 
-      for (var i = offset; i < offset + number; i++) {
-        //Vòng lặp các câu trong 1 màn hình
-        var p = document.createElement("p");
+      if (index >= offset && index < offset + number) {
+        // console.log(index);
+        karaokeContent.innerText = "";
+        var div = document.createElement("div");
 
-        //Vòng lặp các từ trong 1 câu
-        lyric[i].words.forEach(function (word) {
-          var wordEl = document.createElement("span");
-          wordEl.classList.add("word");
-          wordEl.innerText = word.data + " ";
+        for (var i = offset; i < offset + number; i++) {
+          //Vòng lặp các câu trong 1 màn hình
+          var p = document.createElement("p");
 
-          var span = document.createElement("span");
-          span.innerText = word.data;
-          wordEl.append(span);
+          //Vòng lặp các từ trong 1 câu
+          lyric[i].words.forEach(function (word) {
+            var wordEl = document.createElement("span");
+            wordEl.classList.add("word");
+            wordEl.innerText = word.data;
+            wordEl.dataset.startTime = word.startTime;
+            wordEl.dataset.endTime = word.endTime;
 
-          p.append(wordEl);
-        });
+            var span = document.createElement("span");
+            span.innerText = word.data;
+            wordEl.append(span);
 
-        div.append(p);
+            p.append(wordEl);
 
-        // if (p.previousElementSibling !== null) {
-        //   p.previousElementSibling.remove();
-        // }
+            // if (currentTime >= word.startTime) {
+            //   span.style.width = `100%`;
+
+            //   if (
+            //     currentTime >= word.startTime &&
+            //     currentTime <= word.endTime
+            //   ) {
+            //     // console.log(word.data);
+            //     var wordTime = word.endTime - word.startTime;
+
+            //     span.style.transition = `width ${wordTime}ms linear`;
+            //   }
+            // }
+          });
+
+          div.append(p);
+
+          // if (p.previousElementSibling !== null) {
+          //   p.previousElementSibling.remove();
+          // }
+        }
+
+        karaokeContent.append(div);
       }
 
-      karaokeContent.append(div);
+      currentPage = page;
     }
   }
+};
+
+var handleColor = function (currentTime) {
+  // console.log(page);
+  var wordItems = karaokeContent.querySelectorAll(".word");
+  wordItems.forEach(function (wordItem, i) {
+    if (currentTime >= wordItem.dataset.startTime) {
+      wordItem.children[0].style.width = "100%";
+      var wordTime = wordItem.dataset.endTime - wordItem.dataset.startTime;
+      if (wordTime > 50) {
+        wordItem.children[0].style.transition = `width ${wordTime}ms linear`;
+      }
+    }
+  });
 };

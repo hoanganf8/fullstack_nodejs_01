@@ -107,6 +107,7 @@
 
 .karaoke .karaoke-content .word {
   position: relative;
+  margin: 0 5px;
 }
 
 .karaoke .karaoke-content .word span {
