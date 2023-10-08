@@ -36,3 +36,23 @@ h1 {
   margin-bottom: 10px;
   padding-bottom: 10px;
 }
+
+.paginate {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.paginate span {
+  background: green;
+  margin: 0 5px;
+}
+
+.paginate span a {
+  color: #fff;
+  text-decoration: none;
+  padding: 0 5px;
+}
+
+.paginate span.active {
+  background: red;
+}
