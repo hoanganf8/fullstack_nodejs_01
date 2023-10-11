@@ -40,9 +40,22 @@ const render = () => {
   const welcomeHtml = `
 <div class="container py-3">
     <h2 class="text-center">Chào mừng bạn đã quay trở lại</h2>
+    <ul class="profile list-unstyled d-flex gap-2">
+        <li>Chào bạn: <b><span class="name"></span></b></li>
+        <li><a href="#" class="logout">Đăng xuất</a></li>
+    </ul>
 </div>`;
   if (localStorage.getItem("access_token")) {
     root.innerHTML = welcomeHtml;
+    //Lấy thông tin user
+
+    const logout = root.querySelector(".profile .logout");
+    logout.addEventListener("click", (e) => {
+      e.preventDefault();
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("refresh_token");
+      render();
+    });
   } else {
     root.innerHTML = loginHtml;
   }
@@ -73,6 +86,10 @@ const handleLogin = async (data) => {
   localStorage.setItem("refresh_token", refresh_token);
 
   render();
+};
+
+const getProfile = async () => {
+  const { data } = client.get("/auth/profile");
 };
 
 /*
