@@ -8,6 +8,26 @@ Authorization -> Vai trò, ủy quyền
 1. Authentication
 - Session-based Authentication
 - Token-based Authentication
+
+2. Authorization
+
+Logout:
+- Call api logout
+- Xóa storage
+
+Xử lý khi user thay đổi accessToken -> Verify Server
+- Nếu trả về 200 => ok
+- Nếu trả về 401 => Xử lý logout
+
+Khi accessToken hết hạn => Xử lý luôn cấp lại accessToken mới => lưu storage => call lại api cần lấy dữ liệu
+
+Ví dụ: 
+1. Lấy danh sách sản phẩm -> Lấy được
+
+2. Lấy danh sách bài viết -> accessToken hết hạn -> Không lấy được bài viết
+- Call api /refresh -> lấy access mới -> lưu localStorage -> call lại danh sách bài viết
+
+3. Lấy danh sách khóa học
 */
 
 import { config } from "./config.js";
@@ -16,9 +36,15 @@ import { client } from "./client.js";
 const { SERVER_AUTH_API } = config;
 
 client.setUrl(SERVER_AUTH_API);
+const root = document.querySelector("#root");
+const getProfile = async () => {
+  const token = localStorage.getItem("access_token");
+  const { data } = await client.get("/auth/profile", token);
+  const nameEl = root.querySelector(".profile .name");
+  nameEl.innerText = data.name;
+};
 
 const render = () => {
-  const root = document.querySelector("#root");
   const loginHtml = `<div class="container py-3">
 <h2 class="text-center">Đăng nhập</h2>
 <hr>
@@ -48,6 +74,7 @@ const render = () => {
   if (localStorage.getItem("access_token")) {
     root.innerHTML = welcomeHtml;
     //Lấy thông tin user
+    getProfile();
 
     const logout = root.querySelector(".profile .logout");
     logout.addEventListener("click", (e) => {
@@ -58,25 +85,24 @@ const render = () => {
     });
   } else {
     root.innerHTML = loginHtml;
+    const loginForm = document.querySelector(".login");
+    loginForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const emailEl = e.target.querySelector(".email");
+      const passwordEl = e.target.querySelector(".password");
+
+      const email = emailEl.value;
+      const password = passwordEl.value;
+
+      handleLogin({ email, password });
+
+      emailEl.value = "";
+      passwordEl.value = "";
+    });
   }
 };
 
 render();
-
-const loginForm = document.querySelector(".login");
-loginForm.addEventListener("submit", (e) => {
-  e.preventDefault();
-  const emailEl = e.target.querySelector(".email");
-  const passwordEl = e.target.querySelector(".password");
-
-  const email = emailEl.value;
-  const password = passwordEl.value;
-
-  handleLogin({ email, password });
-
-  emailEl.value = "";
-  passwordEl.value = "";
-});
 
 const handleLogin = async (data) => {
   const { data: tokens } = await client.post("/auth/login", data);
@@ -86,10 +112,6 @@ const handleLogin = async (data) => {
   localStorage.setItem("refresh_token", refresh_token);
 
   render();
-};
-
-const getProfile = async () => {
-  const { data } = client.get("/auth/profile");
 };
 
 /*
