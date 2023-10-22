@@ -12,7 +12,10 @@
   "author": "Hoang An F8",
   "license": "ISC",
   "dependencies": {
-    "bootstrap": "^5.3.2",
+    "bootstrap": "^*",
     "datejs": "^1.0.0-rc3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
   }
 }
