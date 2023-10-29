@@ -12,11 +12,16 @@ export default class Counter extends Component {
 
   handleIncrement = () => {
     //Cập nhật lại state => dùng phương thức setState có sẵn trong class Component
-    this.setState({ count: this.state.count + 1 });
+    // this.setState({ count: this.state.count + 1 });
+    this.setState((prevState) => {
+      console.log(prevState);
+      return { count: prevState.count + 1 };
+    });
   };
 
   handleDecrement = () => {
-    this.setState({ count: this.state.count - 1 });
+    // this.setState({ count: this.state.count - 1 });
+    this.setState((prevState) => ({ count: prevState.count - 1 }));
   };
 
   getTodo = async () => {
@@ -29,7 +34,7 @@ export default class Counter extends Component {
 
   componentDidMount() {
     //Chỉ 1 lần khi component được nạp vào DOM
-    this.getTodo();
+    // this.getTodo();
   }
 
   render() {
