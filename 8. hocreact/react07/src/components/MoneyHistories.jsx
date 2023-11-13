@@ -1,7 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 /* eslint-disable react/prop-types */
 import React from "react";
-const MoneyHistories = ({ histories, total }) => {
+const MoneyHistories = ({ histories, total, onResetHistories }) => {
   console.log("MoneyHistories Re-render");
   return (
     <div>
@@ -10,7 +10,7 @@ const MoneyHistories = ({ histories, total }) => {
         <h3 key={index}>{item.toLocaleString()}đ</h3>
       ))}
       <h2>Tổng tiền: {total.toLocaleString()}</h2>
-      <button>Xóa lịch sử</button>
+      <button onClick={onResetHistories}>Xóa lịch sử</button>
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { useState } from "react";
 import MoneyHistories from "./MoneyHistories";
 
@@ -13,6 +13,9 @@ const MoneyTransfer = () => {
     setHistories([...histories, +cost]);
     setCost("");
   };
+  const handleResetHistories = useCallback(() => {
+    setHistories([]);
+  }, []);
   const total = useMemo(
     () =>
       histories.reduce((acc, cur) => {
@@ -23,6 +26,7 @@ const MoneyTransfer = () => {
   );
   //Giải pháp: Cache giá trị của biến total
   //--> ví dụ: Khi nào histories thay đổi --> tính toán lại
+
   return (
     <div>
       <form action="" onSubmit={handleSubmit}>
@@ -34,7 +38,11 @@ const MoneyTransfer = () => {
         />
         <button>Add</button>
       </form>
-      <MoneyHistories histories={histories} total={total} />
+      <MoneyHistories
+        histories={histories}
+        total={total}
+        onResetHistories={handleResetHistories}
+      />
     </div>
   );
 };
@@ -46,4 +54,8 @@ useMemo(callback, deps) --> Cache giá trị tính toán qua mỗi lần re-rend
 - Trả về giá trị
 - Callback phải có return
 - Áp dụng cho các biểu thức logic
+
+useCallback(callback, deps) --> Cache function qua mỗi lần re-render
+- Callback không có return
+- Áp dụng cho việc khởi tạo hàm
 */
