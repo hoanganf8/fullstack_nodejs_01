@@ -1,22 +1,26 @@
 //Kho chứa state
-import { legacy_createStore as createStore } from "redux";
-const initialState = {
-  count: 0,
-};
-const rootReducer = (state = initialState, action) => {
-  switch (action.type) {
-    case "counter/increment": {
-      return { ...state, count: state.count + action.payload };
-    }
-    default: {
-      return state;
-    }
-  }
-};
-export const store = createStore(rootReducer);
+import { combineReducers, legacy_createStore as createStore } from "redux";
+import { composeWithDevTools } from "@redux-devtools/extension";
+import { counterReducer } from "./reducers/counterReducer";
+import { todoReducer } from "./reducers/todoReducer";
+
+const rootReducer = combineReducers({
+  counter: counterReducer,
+  todos: todoReducer,
+});
+
+export const store = createStore(rootReducer, composeWithDevTools());
 
 // console.log(store);
 // store.dispatch({
 //   type: "counter/increment",
 // });
 // console.log(store.getState());
+
+/*
+rootReducer ==> combineReducers
+  - counterReducer
+  - todoReducer
+  - productReducer
+  
+*/
