@@ -1,12 +1,16 @@
+import { Suspense } from "react";
+import ProductLists from "@/components/ProductLists";
+
 export const metadata = {
   title: "Danh sách sản phẩm",
 };
 
+// http://localhost:3000/san-pham?keywords=abc&status=active
 const Products = () => {
   return (
-    <div>
-      <h1>Danh sách sản phẩm</h1>
-    </div>
+    <Suspense fallback={<p>Loading...</p>}>
+      <ProductLists />
+    </Suspense>
   );
 };
 
