@@ -1,10 +1,12 @@
 "use client";
 import { useState } from "react";
 import { postApi } from "./PostList";
-import { useSWRConfig } from "swr";
+// import { useSWRConfig } from "swr"
+import { mutate } from "swr";
+// --> Mutation Global --> Bắt buộc phải thêm key khi gọi hàm mutate
 const PostAdd = () => {
   const [name, setName] = useState("");
-  const { mutate } = useSWRConfig();
+  // const { mutate } = useSWRConfig();
   const handleSubmit = (e) => {
     e.preventDefault();
     addPost({ title: name });

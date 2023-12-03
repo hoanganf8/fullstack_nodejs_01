@@ -2,8 +2,8 @@
 import useSWR from "swr";
 
 export const fetcher = (...args) => fetch(...args).then((res) => res.json());
-// export const postApi = `${process.env.NEXT_PUBLIC_SERVER_API}/posts`;
-export const postApi = `https://jsonplaceholder.typicode.com/posts`;
+export const postApi = `${process.env.NEXT_PUBLIC_SERVER_API}/posts`;
+// export const postApi = `https://jsonplaceholder.typicode.com/posts`;
 
 const PostList = () => {
   //   setInterval(() => {
@@ -13,6 +13,7 @@ const PostList = () => {
     data: posts,
     isLoading,
     error,
+    mutate,
   } = useSWR(postApi, fetcher, {
     // revalidateOnFocus: false,
     // refreshInterval: 2000,

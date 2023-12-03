@@ -4,12 +4,17 @@ export function GET(request) {
   if (!provinceId) {
     return Response.json({ error: "error" });
   }
-  let districtArr = Object.values(district);
-  districtArr = districtArr.filter((item) => {
-    return provinceId === item.parent_code;
-  });
+  let data = Object.values(district);
+  data = data
+    .filter((item) => {
+      return provinceId === item.parent_code;
+    })
+    .sort((a, b) => a.code - b.code);
 
-  return Response.json(districtArr);
+  return Response.json({
+    status: "success",
+    data,
+  });
 }
 
 //http://localhost:3000/api/district?province_id=1
