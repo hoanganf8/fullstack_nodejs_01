@@ -16,11 +16,14 @@ const homeController = {
     //Xử lý dữ liệu của request: Validate
     //Truy vấn với Database --> Thông qua Model
     //Trả về response
-    res.send("<h1>Học Express không khó</h1>");
+    const title = "<i>Học Back-End dễ hơn Front-End</i>";
+    const check = false;
+    const users = ["User 1", "User 2", "User 3"];
+    res.render("home/index", { title, check, users });
   },
 
   showProducts: (req, res) => {
-    res.send("<h1>Sản phẩm</h1>");
+    res.render("home/products", { layout: false });
   },
 };
 
