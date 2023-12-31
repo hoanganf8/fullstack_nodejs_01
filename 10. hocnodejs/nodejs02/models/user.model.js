@@ -11,12 +11,17 @@ module.exports = {
     if (status !== undefined) {
       filter = sql`${filter} AND status = ${status}`;
     }
-    if (keyword.length) {
+    if (keyword?.length) {
       filter = sql`${filter} AND (LOWER(name) LIKE ${
         "%" + keyword + "%"
       } OR LOWER(email) LIKE ${"%" + keyword + "%"})`;
     }
 
     return sql`SELECT * FROM users ${filter} ORDER BY created_at DESC`;
+  },
+  emailUnique: async (email) => {
+    const result = await sql`SELECT id FROM users WHERE email=${email}`;
+    return result.length ? false : true;
+    //Nếu email tồn tại -> false - Ngược lại true
   },
 };
