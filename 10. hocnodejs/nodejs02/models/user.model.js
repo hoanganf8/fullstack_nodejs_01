@@ -24,4 +24,8 @@ module.exports = {
     return result.length ? false : true;
     //Nếu email tồn tại -> false - Ngược lại true
   },
+  create: (data) => {
+    const { name, email, status } = data;
+    return sql`INSERT INTO users(name, email, status) VALUES(${name}, ${email}, ${status})`;
+  },
 };

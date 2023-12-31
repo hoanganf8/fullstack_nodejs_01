@@ -19,7 +19,9 @@
     </div>
   </div>
 </form>
-
+<% if (msg.length) { %>
+  <div class="alert alert-success"><%= msg %></div>
+<% } %>
 <table class="table table-bordered mt-3">
   <tr>
     <th width="5%">STT</th>

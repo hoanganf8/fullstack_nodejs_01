@@ -11,8 +11,8 @@ module.exports = {
 
     //Đọc dữ liệu từ database
     const users = await userModel.all(statusBool, keyword);
-
-    res.render("users/index", { users, moment, status, keyword });
+    const msg = req.flash("msg");
+    res.render("users/index", { users, moment, status, keyword, msg });
   },
   add: (req, res) => {
     // const errors = req.flash("errors");
@@ -32,8 +32,10 @@ module.exports = {
     });
     try {
       const body = await schema.validate(req.body, { abortEarly: false });
-      // const result = await userModel.emailUnique(body.email);
-      // console.log(result);
+      body.status = body.status === "1" ? true : false;
+      await userModel.create(body);
+      req.flash("msg", "Thêm người dùng thành công");
+      return res.redirect("/users");
     } catch (e) {
       const errors = Object.fromEntries(
         e?.inner.map((item) => [item.path, item.message]),
