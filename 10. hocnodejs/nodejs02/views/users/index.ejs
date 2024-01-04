@@ -41,10 +41,12 @@
     <td><%= status ? 'Kích hoạt': 'Chưa kích hoạt' %></td>
     <td><%= moment(createdAt).format('DD/MM/YYYY HH:mm:ss') %></td>
     <td>
-      <a href="#" class="btn btn-warning">Sửa</a>
+      <a href="/users/edit/<%= id %>" class="btn btn-warning">Sửa</a>
     </td>
     <td>
-      <a href="#" class="btn btn-danger">Xóa</a>
+      <form action="/users/delete/<%= id %>" onsubmit="return confirm('Bạn có chắc chắn?')" method="post">
+        <button class="btn btn-danger">Xóa</button>
+      </form>
     </td>
   </tr>
   <% }) %>
