@@ -36,5 +36,14 @@
       <option value="1" <%= user.status ? 'selected': '' %>>Kích hoạt</option>
     </select>
   </div>
+  <div class="mb-3">
+    <label for="">Khóa học</label>
+    <% courses.forEach(course => { %>
+    <label class="mb-3 d-block">
+      <input type="checkbox" name="courses" value="<%= course.id %>" <%= courseUtils.isCourse(user, course.id) ? 'checked': '' %>/> <%=
+      course.name %>
+    </label>
+    <% }) %>
+  </div>
   <button class="btn btn-primary">Lưu</button>
 </form>

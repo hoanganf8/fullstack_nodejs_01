@@ -1,15 +1,14 @@
 const moment = require("moment");
 const model = require("../models/index");
 const { Op } = require("sequelize");
+const courseUtils = require("../utils/courses.utils");
 const User = model.User;
+const Group = model.Group;
+const Course = model.Course;
 module.exports = {
   index: async (req, res) => {
-    const { status, keyword } = req.query;
-    const filter = {
-      // deleted_at: {
-      //   [Op.not]: null,
-      // },
-    };
+    const { status, keyword, group } = req.query;
+    const filter = {};
     if (status === "active" || status === "inactive") {
       filter.status = status === "active" ? true : false;
     }
@@ -27,7 +26,10 @@ module.exports = {
         },
       ];
     }
-    const limit = 3;
+    if (group) {
+      filter.group_id = group;
+    }
+    const limit = 2;
     const { page = 1 } = req.query;
 
     const offset = (page - 1) * limit;
@@ -37,26 +39,48 @@ module.exports = {
       //paranoid: false,
       limit,
       offset,
-      include: {
-        model: model.Phone,
-        as: "phones",
-      },
+      include: [
+        {
+          model: model.Phone,
+          as: "phones",
+        },
+        {
+          model: model.Group,
+          as: "group",
+        },
+      ],
     });
     const totalPage = Math.ceil(count / limit);
-    // const getPhone = async (user) => {
-    //   const phones = await user.getPhone();
-    //   console.log(phones.phone);
-    // };
-    res.render("users/index", { users, moment, totalPage, page });
+    const groups = await Group.findAll({
+      order: [["name", "asc"]],
+    });
+    res.render("users/index", { users, moment, totalPage, page, groups, req });
   },
-  add: (req, res) => {
-    res.render("users/add");
+  add: async (req, res) => {
+    const courses = await Course.findAll({
+      order: [["name", "asc"]],
+    });
+    res.render("users/add", { courses });
   },
   handleAdd: async (req, res, next) => {
     const body = req.body;
+    const courses = !Array.isArray(body.courses)
+      ? [body.courses]
+      : body.courses;
     try {
-      const user = await User.create(body);
+      const user = await User.create({
+        name: body.name,
+        email: body.email,
+        status: +body.status === 1,
+      });
+
       if (user) {
+        if (courses.length) {
+          for (let i = 0; i < courses.length; i++) {
+            const course = await Course.findByPk(courses[i]);
+            await user.addCourse(course);
+          }
+        }
         return res.redirect("/users");
       }
     } catch (e) {
@@ -69,21 +93,21 @@ module.exports = {
       // const user = await User.findByPk(id);
       const user = await User.findOne({
         where: { id },
+        include: {
+          model: Course,
+          as: "courses",
+        },
       });
+
       if (!user) {
         throw new Error("User không tồn tại");
       }
-      // const phones = await user.getPhone();
-      // const phone = phones.phone;
-      // console.log(phone);
-      // const phones = await model.Phone.findOne({
-      //   where: {
-      //     phone: "0123456789",
-      //   },
-      // });
-      // const userByPhone = await phones.getUser();
-      // console.log(userByPhone);
-      res.render("users/edit", { user });
+
+      const courses = await Course.findAll({
+        order: [["name", "asc"]],
+      });
+
+      res.render("users/edit", { user, courses, courseUtils });
     } catch (e) {
       return next(e);
     }
@@ -91,9 +115,26 @@ module.exports = {
   handleEdit: async (req, res) => {
     const { id } = req.params;
     const body = req.body;
-    await User.update(body, {
-      where: { id },
-    });
+    const courses = !Array.isArray(body.courses)
+      ? [body.courses]
+      : body.courses;
+    const status = await User.update(
+      {
+        name: body.name,
+        email: body.email,
+        status: +body.status === 1,
+      },
+      {
+        where: { id },
+      },
+    );
+    if (status && courses.length) {
+      const coursesRequest = await Promise.all(
+        courses.map((courseId) => Course.findByPk(courseId)),
+      );
+      const user = await User.findByPk(id);
+      await user.setCourses(coursesRequest);
+    }
     return res.redirect("/users/edit/" + id);
   },
   delete: async (req, res) => {
