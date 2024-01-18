@@ -7,9 +7,16 @@ var logger = require("morgan");
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
+var authRouter = require("./routes/auth");
 const expressLayouts = require("express-ejs-layouts");
 const session = require("express-session");
 const flash = require("connect-flash");
+const passport = require("passport");
+const localPassport = require("./passports/local.passport");
+const googlePassport = require("./passports/google.passport");
+const { User } = require("./models/index");
+const authMiddleware = require("./middlewares/auth.middleware");
+const guestMiddleware = require("./middlewares/guest.middleware");
 
 var app = express();
 app.use(
@@ -20,6 +27,22 @@ app.use(
   }),
 );
 app.use(flash());
+
+//Cấu hình passport
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser(async (id, done) => {
+  const user = await User.findByPk(id);
+  done(null, user);
+});
+
+passport.use("local", localPassport);
+passport.use("google", googlePassport);
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -32,6 +55,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
+app.use("/auth", guestMiddleware, authRouter);
+
+//Gọi auth.middleware
+app.use(authMiddleware);
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 

@@ -25,13 +25,13 @@ module.exports = {
       return Promise.all([
         queryInterface.changeColumn(
           "users",
-          "name",
+          "fullname",
           {
             type: Sequelize.DataTypes.STRING(30),
           },
           { transaction: t },
         ),
-        queryInterface.renameColumn("users", "name", "fullname", {
+        queryInterface.renameColumn("users", "fullname", "name", {
           transaction: t,
         }),
       ]);
