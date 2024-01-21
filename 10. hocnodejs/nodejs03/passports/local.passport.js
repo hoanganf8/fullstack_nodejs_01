@@ -1,4 +1,4 @@
-const { User } = require("../models/index");
+const { User, Provider } = require("../models/index");
 const bcrypt = require("bcrypt");
 const LocalStrategy = require("passport-local").Strategy;
 const passportLocal = new LocalStrategy(
@@ -8,9 +8,14 @@ const passportLocal = new LocalStrategy(
   },
   async (email, password, done) => {
     //Xác thực email và password có tồn tại trong Database hay không?
+    const provider = await Provider.findOne({
+      where: { name: "email" },
+    });
+
     const user = await User.findOne({
       where: {
         email,
+        provider_id: provider.id,
       },
     });
 

@@ -23,10 +23,8 @@ router.get(
   passport.authenticate("google", {
     failureRedirect: "/auth/login",
     failureFlash: true,
+    successRedirect: "/",
   }),
-  (req, res) => {
-    res.send("ok");
-  },
 );
 
 module.exports = router;

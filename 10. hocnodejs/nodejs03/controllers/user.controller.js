@@ -40,21 +40,22 @@ module.exports = {
       limit,
       offset,
       include: [
-        {
-          model: model.Phone,
-          as: "phones",
-        },
-        {
-          model: model.Group,
-          as: "group",
-        },
+        // {
+        //   model: model.Phone,
+        //   as: "phones",
+        // },
+        // {
+        //   model: model.Group,
+        //   as: "group",
+        // },
       ],
     });
     const totalPage = Math.ceil(count / limit);
-    const groups = await Group.findAll({
-      order: [["name", "asc"]],
-    });
-    res.render("users/index", { users, moment, totalPage, page, groups, req });
+    // const groups = await Group.findAll({
+    //   order: [["name", "asc"]],
+    // });
+    const groups = [];
+    res.render("users/index", { users, moment, totalPage, page, req, groups });
   },
   add: async (req, res) => {
     const courses = await Course.findAll({

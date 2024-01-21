@@ -22,6 +22,10 @@ module.exports = (sequelize, DataTypes) => {
       //   foreignKey: "user_id",
       //   as: "courses",
       // });
+      User.belongsTo(models.Provider, {
+        foreignKey: "provider_id",
+        as: "provider",
+      });
     }
   }
   User.init(
@@ -35,6 +39,7 @@ module.exports = (sequelize, DataTypes) => {
       email: DataTypes.STRING,
       password: DataTypes.STRING,
       status: DataTypes.BOOLEAN,
+      provider_id: DataTypes.INTEGER,
     },
     {
       sequelize,
