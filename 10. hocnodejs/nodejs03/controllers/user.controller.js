@@ -2,9 +2,11 @@ const moment = require("moment");
 const model = require("../models/index");
 const { Op } = require("sequelize");
 const courseUtils = require("../utils/courses.utils");
+const { isRole } = require("../utils/permissions.utils");
 const User = model.User;
 const Group = model.Group;
 const Course = model.Course;
+const Role = model.Role;
 module.exports = {
   index: async (req, res) => {
     const { status, keyword, group } = req.query;
@@ -61,7 +63,7 @@ module.exports = {
     const courses = await Course.findAll({
       order: [["name", "asc"]],
     });
-    res.render("users/add", { courses });
+    res.render("users/add", { courses, req });
   },
   handleAdd: async (req, res, next) => {
     const body = req.body;
@@ -108,7 +110,7 @@ module.exports = {
         order: [["name", "asc"]],
       });
 
-      res.render("users/edit", { user, courses, courseUtils });
+      res.render("users/edit", { user, courses, courseUtils, req });
     } catch (e) {
       return next(e);
     }
@@ -142,6 +144,34 @@ module.exports = {
     const { id } = req.params;
     await User.destroy({ where: { id }, force: true });
     return res.redirect("/users");
+  },
+  permission: async (req, res) => {
+    const { id } = req.params;
+    const user = await User.findOne({
+      where: { id },
+      include: {
+        model: Role,
+        as: "roles",
+      },
+    });
+
+    const roles = await Role.findAll({
+      order: [["name", "asc"]],
+    });
+    res.render("users/permission", { req, roles, isRole, user });
+  },
+  handlePermission: async (req, res) => {
+    const { id } = req.params;
+    const body = req.body;
+    const roles = Array.isArray(body.roles) ? body.roles : [body.roles];
+    if (roles.length) {
+      const rolesIntance = await Promise.all(
+        roles.map((roleId) => Role.findByPk(roleId)),
+      );
+      const user = await User.findByPk(id);
+      await user.setRoles(rolesIntance);
+    }
+    return res.redirect("/users/permission/" + id);
   },
 };
 

@@ -8,6 +8,7 @@ var logger = require("morgan");
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var authRouter = require("./routes/auth");
+var roleRouter = require("./routes/roles");
 const expressLayouts = require("express-ejs-layouts");
 const session = require("express-session");
 const flash = require("connect-flash");
@@ -61,6 +62,7 @@ app.use("/auth", guestMiddleware, authRouter);
 app.use(authMiddleware);
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
+app.use("/roles", roleRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -75,7 +77,7 @@ app.use(function (err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render("error");
+  res.render("error", { layout: false });
 });
 
 module.exports = app;
