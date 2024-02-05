@@ -19,6 +19,24 @@ const googlePassport = require("./passports/google.passport");
 const { User } = require("./models/index");
 const authMiddleware = require("./middlewares/auth.middleware");
 const guestMiddleware = require("./middlewares/guest.middleware");
+const whitelist = require("./utils/cors");
+const cors = require("cors");
+var corsOptions = {
+  origin: function (origin, callback) {
+    const env = process.env.NODE_ENV || "development";
+    if (env === "production") {
+      if (whitelist.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+      return;
+    }
+
+    callback(null, true);
+  },
+  //  methods: ["POST"],
+};
 
 var app = express();
 app.use(
@@ -57,7 +75,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use("/api", apiRouter);
+app.use("/api", cors(corsOptions), apiRouter);
 
 app.use("/auth", guestMiddleware, authRouter);
 

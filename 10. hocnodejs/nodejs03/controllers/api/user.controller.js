@@ -2,6 +2,7 @@ const { User } = require("../../models/index");
 const { Op } = require("sequelize");
 const { object, string } = require("yup");
 const bcrypt = require("bcrypt");
+const UserTransformer = require("../../transformers/user.transformer");
 
 module.exports = {
   index: async (req, res) => {
@@ -45,7 +46,8 @@ module.exports = {
       const { count, rows: users } = await User.findAndCountAll(options);
       response.status = 200;
       response.message = "Success";
-      response.data = users;
+      response.data = new UserTransformer(users);
+      // response.data = users;
       response.count = count;
     } catch (e) {
       response.status = 500;
@@ -69,7 +71,7 @@ module.exports = {
         Object.assign(response, {
           status: 200,
           message: "Success",
-          data: user,
+          data: new UserTransformer(user),
         });
       }
     } catch (e) {
